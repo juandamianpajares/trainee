@@ -82,7 +82,7 @@ services:
       - ${NETWORK_NAME:-bitnet}
 
 networks:
-  ${NETWORK_NAME:-bitnet}:
+ bitnet
     driver: bridge
 
 volumes:

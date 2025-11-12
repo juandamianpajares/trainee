@@ -35,6 +35,13 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . .
 
+# Create Laravel storage directories if they don't exist
+RUN mkdir -p storage/framework/cache \
+    && mkdir -p storage/framework/sessions \
+    && mkdir -p storage/framework/views \
+    && mkdir -p storage/logs \
+    && mkdir -p bootstrap/cache
+
 # Set proper permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
