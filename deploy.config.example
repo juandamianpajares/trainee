@@ -1,0 +1,26 @@
+# Deployment Configuration
+# Copy this file to deploy.config and fill with your server details
+# NEVER commit deploy.config to git (it's in .gitignore)
+
+# SSH Configuration
+SSH_USER=your_username
+SSH_HOST=your-server.com
+SSH_PORT=22
+SSH_KEY_PATH=~/.ssh/id_rsa
+
+# Remote paths
+REMOTE_PROJECT_PATH=/var/www/html/trainee
+REMOTE_DOCKER_COMPOSE_PATH=/var/www/html/trainee
+
+# Deployment options
+BACKUP_BEFORE_DEPLOY=true
+RUN_MIGRATIONS=true
+BUILD_ASSETS=true
+RESTART_SERVICES=true
+
+# Slack/Discord notifications (optional)
+NOTIFY_ON_DEPLOY=false
+WEBHOOK_URL=
+
+# Maintenance mode
+ENABLE_MAINTENANCE_MODE=true
