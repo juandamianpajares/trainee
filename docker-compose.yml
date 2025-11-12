@@ -54,30 +54,6 @@ services:
     networks:
       - bitnet
 
-  queue:
-    image: php:8.3-cli
-    container_name: bitnet_queue
-    working_dir: /var/www/html
-    volumes:
-      - ./:/var/www/html
-    command: sh -c "php artisan queue:work --sleep=3 --tries=3"
-    depends_on:
-      - app
-    networks:
-      - bitnet
-
-  scheduler:
-    image: php:8.3-cli
-    container_name: bitnet_scheduler
-    working_dir: /var/www/html
-    volumes:
-      - ./:/var/www/html
-    command: sh -c "while [ 1 ]; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"
-    depends_on:
-      - app
-    networks:
-      - bitnet
-
   mailhog:
     image: mailhog/mailhog:latest
     container_name: bitnet_mailhog
