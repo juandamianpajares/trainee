@@ -49,15 +49,20 @@ RUN mkdir -p storage/framework/cache \
     && mkdir -p storage/logs \
     && mkdir -p bootstrap/cache
 
-# Set proper permissions
+# Set proper permissions (775 permite escritura para el grupo)
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache
+    && chmod -R 775 /var/www/html/storage \
+    && chmod -R 775 /var/www/html/bootstrap/cache
 
 # Verify PHP installation
 RUN php -v && composer --version
 
+# Copy entrypoint script
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # Expose PHP-FPM port
 EXPOSE 9000
 
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["php-fpm"]
