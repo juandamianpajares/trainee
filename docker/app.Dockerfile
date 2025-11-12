@@ -29,9 +29,9 @@ RUN docker-php-ext-configure gd --with-jpeg \
 # Install Composer
 COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
 
-# Configurar usuario
-RUN addgroup -g 1000 appuser && \
-    adduser -D -u 1000 -G appuser appuser
+# Configurar usuario (sintaxis para Debian/Ubuntu)
+RUN groupadd -g 1000 appuser && \
+    useradd -u 1000 -g appuser -m -s /bin/bash appuser
 
 # Copiar configuración PHP
 COPY docker/php/local.ini /usr/local/etc/php/conf.d/local.ini
