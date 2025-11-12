@@ -35,11 +35,6 @@ docker-compose exec -T app bash -c "composer install --no-interaction --prefer-d
     exit 1
 }
 
-echo -e "${GREEN}📦 Installing PDF and QR code packages...${NC}"
-docker-compose exec -T app bash -c "composer require barryvdh/laravel-dompdf:^1.0 simplesoftwareio/simple-qrcode --no-interaction" || {
-    echo -e "${YELLOW}⚠️  Warning: Failed to install PDF/QR packages${NC}"
-}
-
 echo -e "${GREEN}📄 Publishing vendor configurations...${NC}"
 docker-compose exec -T app bash -c "php artisan vendor:publish --provider='Barryvdh\\DomPDF\\ServiceProvider' --force" || {
     echo -e "${YELLOW}⚠️  Warning: Failed to publish DomPDF config${NC}"
