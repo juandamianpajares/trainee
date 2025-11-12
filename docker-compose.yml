@@ -1,0 +1,103 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/app.Dockerfile
+    container_name: bitnet_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - db
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=bitnet
+      - DB_USERNAME=bitnet
+      - DB_PASSWORD=bitnet123
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    networks:
+      - bitnet
+
+  web:
+    image: nginx:alpine
+    container_name: bitnet_web
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - bitnet
+
+  db:
+    image: mysql:8.0
+    container_name: bitnet_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: bitnet
+      MYSQL_USER: bitnet
+      MYSQL_PASSWORD: bitnet123
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - bitnet
+
+  queue:
+    image: php:8.3-cli
+    container_name: bitnet_queue
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    command: sh -c "php artisan queue:work --sleep=3 --tries=3"
+    depends_on:
+      - app
+    networks:
+      - bitnet
+
+  scheduler:
+    image: php:8.3-cli
+    container_name: bitnet_scheduler
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    command: sh -c "while [ 1 ]; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"
+    depends_on:
+      - app
+    networks:
+      - bitnet
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: bitnet_mailhog
+    ports:
+      - "8025:8025"
+    networks:
+      - bitnet
+
+  npm:
+    image: node:20-alpine
+    container_name: bitnet_npm
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    command: sh -c "npm install && npm run dev"
+    networks:
+      - bitnet
+
+networks:
+  bitnet:
+
+volumes:
+  db_data:
