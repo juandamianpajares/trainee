@@ -59,6 +59,7 @@ services:
       - "${DB_PORT_EXTERNAL:-3306}:3306"
     volumes:
       - db_data:/var/lib/mysql
+      - ./docker/sql:/docker-entrypoint-initdb.d
     networks:
       - ${NETWORK_NAME:-bitnet}
 
